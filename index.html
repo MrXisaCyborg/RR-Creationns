@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -157,7 +157,7 @@
         &quot;short_name&quot;: &quot;RR Creations&quot;,
         &quot;start_url&quot;: &quot;.&quot;,
         &quot;display&quot;: &quot;standalone&quot;,
-        &quot;background_color&quot;: &quot;#f8fafc&quot;,
+        &quot;background_color&quot;: &quot;#1e293b&quot;,
         &quot;theme_color&quot;: &quot;#4f46e5&quot;,
         &quot;description&quot;: &quot;A bookkeeper app for RR Creations.&quot;,
         &quot;icons&quot;: [
@@ -166,20 +166,16 @@
         ]
     }">
 </head>
-<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-200">
+<body class="bg-slate-900 text-slate-200">
 
     <div id="app" class="max-w-xl mx-auto p-4 md:p-6">
         <!-- Header for UI -->
         <header class="text-center mb-6 relative no-print">
-            <h1 class="text-3xl md:text-4xl font-bold text-indigo-600 dark:text-indigo-400">RR Creations</h1>
-            <p class="text-slate-500 dark:text-slate-400 mt-1">Manage your reselling business finances.</p>
+            <h1 class="text-3xl md:text-4xl font-bold text-indigo-400">RR Creations</h1>
+            <p class="text-slate-400 mt-1">Manage your reselling business finances.</p>
             <div class="absolute top-0 right-0 flex items-center gap-2">
-                <button id="notification-btn" title="Enable daily reminders" class="p-2 text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400">
+                <button id="notification-btn" title="Enable daily reminders" class="p-2 text-slate-400 hover:text-indigo-400">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bell"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-                </button>
-                <button id="theme-toggle" title="Toggle dark mode" class="p-2 text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400">
-                    <svg id="theme-icon-light" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                    <svg id="theme-icon-dark" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                 </button>
             </div>
         </header>
@@ -193,38 +189,38 @@
 
         <!-- Totals Summary -->
         <div class="grid grid-cols-2 gap-4 mb-6">
-            <div class="bg-yellow-100 p-4 rounded-lg shadow-lg border border-yellow-200 dark:bg-yellow-900/50 dark:border-yellow-400/20">
-                <h2 class="text-sm font-semibold text-yellow-800 dark:text-yellow-300">Pending Profit</h2>
-                <p id="total-pending" class="text-2xl font-bold text-yellow-900 dark:text-yellow-200">₹0.00</p>
+            <div class="bg-yellow-900/50 p-4 rounded-lg shadow-lg border border-yellow-400/20">
+                <h2 class="text-sm font-semibold text-yellow-300">Pending Profit</h2>
+                <p id="total-pending" class="text-2xl font-bold text-yellow-200">₹0.00</p>
             </div>
-            <div class="bg-green-100 p-4 rounded-lg shadow-lg border border-green-200 dark:bg-green-900/50 dark:border-green-400/20">
-                <h2 class="text-sm font-semibold text-green-800 dark:text-green-300">Received Profit</h2>
-                <p id="total-received" class="text-2xl font-bold text-green-900 dark:text-green-200">₹0.00</p>
+            <div class="bg-green-900/50 p-4 rounded-lg shadow-lg border border-green-400/20">
+                <h2 class="text-sm font-semibold text-green-300">Received Profit</h2>
+                <p id="total-received" class="text-2xl font-bold text-green-200">₹0.00</p>
             </div>
         </div>
         
         <!-- Add Order Form -->
-        <div class="bg-white p-6 rounded-lg shadow-xl mb-6 dark:bg-slate-800">
+        <div class="bg-slate-800 p-6 rounded-lg shadow-xl mb-6">
             <h2 class="text-xl font-bold mb-4">Add New Order</h2>
             <form id="order-form" class="space-y-4">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label for="customer-name" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Customer Name</label>
-                        <input type="text" id="customer-name" placeholder="e.g., Anjali Sharma" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-slate-700 dark:border-slate-600 dark:placeholder-slate-400 dark:text-white" required>
+                        <label for="customer-name" class="block text-sm font-medium text-slate-300">Customer Name</label>
+                        <input type="text" id="customer-name" placeholder="e.g., Anjali Sharma" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-white" required>
                     </div>
                     <div>
-                        <label for="item-description" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Item Description</label>
-                        <input type="text" id="item-description" placeholder="e.g., Blue Kurti" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-slate-700 dark:border-slate-600 dark:placeholder-slate-400 dark:text-white" required>
+                        <label for="item-description" class="block text-sm font-medium text-slate-300">Item Description</label>
+                        <input type="text" id="item-description" placeholder="e.g., Blue Kurti" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-white" required>
                     </div>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label for="vendor-name" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Vendor Name (Optional)</label>
-                        <input type="text" id="vendor-name" placeholder="e.g., Surat Textiles" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-slate-700 dark:border-slate-600 dark:placeholder-slate-400 dark:text-white">
+                        <label for="vendor-name" class="block text-sm font-medium text-slate-300">Vendor Name (Optional)</label>
+                        <input type="text" id="vendor-name" placeholder="e.g., Surat Textiles" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-white">
                     </div>
                     <div>
-                        <label for="payment-method" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Payment Method</label>
-                        <select id="payment-method" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white" required>
+                        <label for="payment-method" class="block text-sm font-medium text-slate-300">Payment Method</label>
+                        <select id="payment-method" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-white" required>
                             <option value="GPay">GPay</option>
                             <option value="Cash">Cash</option>
                         </select>
@@ -232,64 +228,64 @@
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label for="cost-price" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Cost Price (₹)</label>
-                        <input type="number" id="cost-price" placeholder="e.g., 900" min="0" step="0.01" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-slate-700 dark:border-slate-600 dark:placeholder-slate-400 dark:text-white" required>
+                        <label for="cost-price" class="block text-sm font-medium text-slate-300">Cost Price (₹)</label>
+                        <input type="number" id="cost-price" placeholder="e.g., 900" min="0" step="0.01" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-white" required>
                     </div>
                     <div>
-                        <label for="selling-price" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Selling Price (₹)</label>
-                        <input type="number" id="selling-price" placeholder="e.g., 1200" min="0" step="0.01" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-slate-700 dark:border-slate-600 dark:placeholder-slate-400 dark:text-white" required>
+                        <label for="selling-price" class="block text-sm font-medium text-slate-300">Selling Price (₹)</label>
+                        <input type="number" id="selling-price" placeholder="e.g., 1200" min="0" step="0.01" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-white" required>
                     </div>
                 </div>
-                <button type="submit" class="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200 dark:bg-indigo-500 dark:hover:bg-indigo-600 dark:focus:ring-indigo-400">Add Order</button>
+                <button type="submit" class="w-full bg-indigo-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-400 transition-colors duration-200">Add Order</button>
             </form>
         </div>
 
         <!-- Monthly Recap -->
-        <div id="recap-container" class="bg-white p-6 rounded-lg shadow-xl mb-6 dark:bg-slate-800">
+        <div id="recap-container" class="bg-slate-800 p-6 rounded-lg shadow-xl mb-6">
             <div class="flex justify-between items-start">
                 <h2 class="text-xl font-bold mb-4">Monthly Recap</h2>
                  <div class="no-print -mt-2 flex items-center">
-                     <button id="share-report" title="Share Report" class="p-2 text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400">
+                     <button id="share-report" title="Share Report" class="p-2 text-slate-400 hover:text-indigo-400">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-share-2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
                      </button>
-                     <button id="export-pdf" title="Export as PDF" class="p-2 text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400">
+                     <button id="export-pdf" title="Export as PDF" class="p-2 text-slate-400 hover:text-indigo-400">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
                      </button>
                  </div>
             </div>
             <div class="flex gap-4 mb-4">
                 <div class="flex-1">
-                    <label for="month-select" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Month</label>
-                    <select id="month-select" class="month-select mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white"></select>
+                    <label for="month-select" class="block text-sm font-medium text-slate-300">Month</label>
+                    <select id="month-select" class="month-select mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-white"></select>
                 </div>
                 <div class="flex-1">
-                    <label for="year-select" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Year</label>
-                    <select id="year-select" class="year-select mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white"></select>
+                    <label for="year-select" class="block text-sm font-medium text-slate-300">Year</label>
+                    <select id="year-select" class="year-select mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-white"></select>
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-4 text-center">
                 <div>
-                    <h3 class="text-sm font-semibold text-slate-500 dark:text-slate-400">Total Sales</h3>
-                    <p id="monthly-sales" class="text-lg font-bold text-blue-600 dark:text-blue-400">₹0.00</p>
+                    <h3 class="text-sm font-semibold text-slate-400">Total Sales</h3>
+                    <p id="monthly-sales" class="text-lg font-bold text-blue-400">₹0.00</p>
                 </div>
                 <div>
-                    <h3 class="text-sm font-semibold text-slate-500 dark:text-slate-400">Total Costs</h3>
-                    <p id="monthly-costs" class="text-lg font-bold text-red-600 dark:text-red-400">₹0.00</p>
+                    <h3 class="text-sm font-semibold text-slate-400">Total Costs</h3>
+                    <p id="monthly-costs" class="text-lg font-bold text-red-400">₹0.00</p>
                 </div>
                 <div>
-                    <h3 class="text-sm font-semibold text-slate-500 dark:text-slate-400">Received Profit</h3>
-                    <p id="monthly-profit" class="text-lg font-bold text-green-600 dark:text-green-400">₹0.00</p>
+                    <h3 class="text-sm font-semibold text-slate-400">Received Profit</h3>
+                    <p id="monthly-profit" class="text-lg font-bold text-green-400">₹0.00</p>
                 </div>
                  <div>
-                    <h3 class="text-sm font-semibold text-slate-500 dark:text-slate-400">Pending Profit</h3>
-                    <p id="monthly-pending" class="text-lg font-bold text-yellow-600 dark:text-yellow-400">₹0.00</p>
+                    <h3 class="text-sm font-semibold text-slate-400">Pending Profit</h3>
+                    <p id="monthly-pending" class="text-lg font-bold text-yellow-400">₹0.00</p>
                 </div>
             </div>
         </div>
 
         <!-- Install Button -->
         <div id="install-container" class="text-center mb-6" style="display: none;">
-            <button id="install-button" class="bg-purple-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-purple-700 transition-colors duration-200 dark:bg-purple-500 dark:hover:bg-purple-600">
+            <button id="install-button" class="bg-purple-500 text-white font-semibold py-2 px-6 rounded-lg hover:bg-purple-600 transition-colors duration-200">
                 Install App
             </button>
         </div>
@@ -298,7 +294,7 @@
         <div>
             <div class="flex items-center justify-between mb-4">
                  <h2 class="text-xl font-bold">Order History</h2>
-                 <div id="filter-container" class="flex border border-slate-300 rounded-lg p-0.5 bg-slate-100 dark:border-slate-600 dark:bg-slate-700 no-print">
+                 <div id="filter-container" class="flex border border-slate-600 rounded-lg p-0.5 bg-slate-700 no-print">
                     <button data-filter="all" class="filter-btn active-filter text-sm px-3 py-1 rounded-md">All</button>
                     <button data-filter="pending" class="filter-btn text-sm px-3 py-1 rounded-md">Pending</button>
                     <button data-filter="received" class="filter-btn text-sm px-3 py-1 rounded-md">Received</button>
@@ -306,7 +302,7 @@
                  </div>
             </div>
             <div id="order-list" class="space-y-3">
-                <p id="no-orders" class="text-center text-slate-500 dark:text-slate-400 py-8">No orders yet. Add one to get started!</p>
+                <p id="no-orders" class="text-center text-slate-400 py-8">No orders yet. Add one to get started!</p>
             </div>
         </div>
     </div>
@@ -362,14 +358,21 @@
 
         const notificationBtn = document.getElementById('notification-btn');
         const filterContainer = document.getElementById('filter-container');
-        const themeToggle = document.getElementById('theme-toggle');
-        const themeIconLight = document.getElementById('theme-icon-light');
-        const themeIconDark = document.getElementById('theme-icon-dark');
         const exportPdfBtn = document.getElementById('export-pdf');
         const shareReportBtn = document.getElementById('share-report');
         const printDateEl = document.getElementById('print-date');
         const printTitleEl = document.getElementById('print-title');
 
+        // --- Helper Functions ---
+        const formatCurrency = (num) => {
+            if (typeof num !== 'number') num = 0;
+            return num.toLocaleString('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        };
 
         // --- Firebase Initialization ---
         async function initFirebase() {
@@ -408,6 +411,17 @@
                 });
                 fetchedOrders.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
                 allOrders = fetchedOrders; 
+                
+                const recapContainer = document.getElementById('recap-container');
+                const now = new Date();
+                if (recapContainer) {
+                    const selectedMonth = monthSelect.value ? parseInt(monthSelect.value) : now.getMonth();
+                    const selectedYear = yearSelect.value ? parseInt(yearSelect.value) : now.getFullYear();
+                    setupDateSelectors(recapContainer, selectedMonth, selectedYear);
+                    monthSelect.value = selectedMonth;
+                    yearSelect.value = selectedYear;
+                }
+
                 renderOrders(); 
                 updateTotals();
                 calculateMonthlyRecap();
@@ -494,10 +508,10 @@
             }
 
             modalTitle.textContent = title;
-            modalBody.innerHTML = `<p class="text-slate-600 dark:text-slate-300 text-center">${text}</p>`;
+            modalBody.innerHTML = `<p class="text-slate-300 text-center">${text}</p>`;
             modalFooter.innerHTML = `
                 <button id="confirm-btn" class="${confirmClass} font-semibold py-2 px-6 rounded-lg">${confirmText}</button>
-                <button id="cancel-btn" class="bg-slate-200 text-slate-800 font-semibold py-2 px-6 rounded-lg hover:bg-slate-300 dark:bg-slate-600 dark:text-slate-200 dark:hover:bg-slate-500">Cancel</button>
+                <button id="cancel-btn" class="bg-slate-600 text-slate-200 font-semibold py-2 px-6 rounded-lg hover:bg-slate-500">Cancel</button>
             `;
 
             document.getElementById('confirm-btn').onclick = handleConfirm;
@@ -507,7 +521,7 @@
 
         const showMessageModal = (title, text) => {
             modalTitle.textContent = title;
-            modalBody.innerHTML = `<p class="text-slate-600 dark:text-slate-300 text-center">${text}</p>`;
+            modalBody.innerHTML = `<p class="text-slate-300 text-center">${text}</p>`;
             modalFooter.innerHTML = `<button id="ok-btn" class="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700">OK</button>`;
             
             document.getElementById('ok-btn').onclick = hideActionModal;
@@ -544,10 +558,10 @@
             const receivedProfit = filteredOrders.filter(o => o.status === 'received').reduce((sum, o) => sum + o.profit, 0);
             const pendingProfit = filteredOrders.filter(o => o.status === 'pending').reduce((sum, o) => sum + o.profit, 0);
 
-            monthlySalesEl.textContent = `₹${sales.toFixed(2)}`;
-            monthlyCostsEl.textContent = `₹${costs.toFixed(2)}`;
-            monthlyProfitEl.textContent = `₹${receivedProfit.toFixed(2)}`;
-            monthlyPendingEl.textContent = `₹${pendingProfit.toFixed(2)}`;
+            monthlySalesEl.textContent = formatCurrency(sales);
+            monthlyCostsEl.textContent = formatCurrency(costs);
+            monthlyProfitEl.textContent = formatCurrency(receivedProfit);
+            monthlyPendingEl.textContent = formatCurrency(pendingProfit);
         };
 
         // --- UI Rendering ---
@@ -579,18 +593,18 @@
                 orderEl.className = `p-4 rounded-lg shadow-md flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 ${cardClass} dark:border order-card`;
                 orderEl.innerHTML = `
                     <div class="flex-grow">
-                        <p class="font-semibold text-slate-800 dark:text-slate-100">${order.customerName}</p>
-                        <p class="text-sm text-slate-600 dark:text-slate-400">${order.itemDescription}</p>
-                        ${order.vendorName ? `<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Sold by: <span class="font-medium">${order.vendorName}</span></p>` : ''}
+                        <p class="font-semibold text-slate-100">${order.customerName}</p>
+                        <p class="text-sm text-slate-400">${order.itemDescription}</p>
+                        ${order.vendorName ? `<p class="text-xs text-slate-400 mt-1">Sold by: <span class="font-medium">${order.vendorName}</span></p>` : ''}
                         <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm mt-2">
-                           <p><span class="font-medium text-slate-500 dark:text-slate-400">Sale:</span> ₹${order.sellingPrice.toFixed(2)}</p>
-                           <p><span class="font-medium text-slate-500 dark:text-slate-400">Cost:</span> ₹${order.costPrice.toFixed(2)}</p>
-                           <p><span class="font-bold text-green-700 dark:text-green-400">Profit:</span> ₹${order.profit.toFixed(2)}</p>
-                           ${order.paymentMethod ? `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${order.paymentMethod === 'GPay' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200'}">${order.paymentMethod}</span>` : ''}
+                           <p><span class="font-medium text-slate-400">Sale:</span> ${formatCurrency(order.sellingPrice)}</p>
+                           <p><span class="font-medium text-slate-400">Cost:</span> ${formatCurrency(order.costPrice)}</p>
+                           <p><span class="font-bold text-green-400">Profit:</span> ${formatCurrency(order.profit)}</p>
+                           ${order.paymentMethod ? `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${order.paymentMethod === 'GPay' ? 'bg-blue-900 text-blue-200' : 'bg-emerald-900 text-emerald-200'}">${order.paymentMethod}</span>` : ''}
                         </div>
                     </div>
                     <div class="flex flex-col sm:items-end gap-2 w-full sm:w-auto flex-shrink-0 order-actions">
-                         ${order.isArchived ? `<span class="font-bold text-sm uppercase text-slate-500 dark:text-slate-400">Archived</span>` : `<span class="font-bold text-sm uppercase ${statusTextClass}">Profit ${order.status}</span>`}
+                         ${order.isArchived ? `<span class="font-bold text-sm uppercase text-slate-400">Archived</span>` : `<span class="font-bold text-sm uppercase ${statusTextClass}">Profit ${order.status}</span>`}
                          <div class="flex items-center gap-2 w-full sm:w-auto">
                             ${order.isArchived ? 
                                 `<button data-id="${order.id}" data-action="unarchive" class="bg-sky-500 text-white flex-grow sm:flex-grow-0 text-sm font-semibold py-2 px-3 rounded-md transition-transform transform hover:scale-105">Unarchive</button>
@@ -617,8 +631,8 @@
             const pendingProfit = activeOrders.filter(o => o.status === 'pending').reduce((sum, o) => sum + o.profit, 0);
             const receivedProfit = activeOrders.filter(o => o.status === 'received').reduce((sum, o) => sum + o.profit, 0);
 
-            totalPendingEl.textContent = `₹${pendingProfit.toFixed(2)}`;
-            totalReceivedEl.textContent = `₹${receivedProfit.toFixed(2)}`;
+            totalPendingEl.textContent = formatCurrency(pendingProfit);
+            totalReceivedEl.textContent = formatCurrency(receivedProfit);
         };
         
         function setupDateSelectors(container, currentMonth, currentYear) {
@@ -708,7 +722,7 @@
                 if (totalPending > 0) {
                      const title = 'Daily Profit Reminder';
                      const options = {
-                        body: `You have ₹${totalPending.toFixed(2)} in pending profit. Don't forget to follow up!`,
+                        body: `You have ${formatCurrency(totalPending)} in pending profit. Don't forget to follow up!`,
                         icon: 'https://placehold.co/192x192/4f46e5/ffffff?text=RR',
                         tag: 'profit-reminder', 
                         renotify: true,
@@ -718,47 +732,20 @@
                 }
             }
         }
-
-        // --- Theme (Dark Mode) Logic ---
-        function applyTheme(theme) {
-            if (theme === 'dark') {
-                document.documentElement.classList.add('dark');
-                themeIconLight.classList.remove('hidden');
-                themeIconDark.classList.add('hidden');
-            } else {
-                document.documentElement.classList.remove('dark');
-                themeIconLight.classList.add('hidden');
-                themeIconDark.classList.remove('hidden');
-            }
-            localStorage.setItem('theme', theme);
-        }
-
-        function setupTheme() {
-            const savedTheme = localStorage.getItem('theme');
-            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            
-            const currentTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
-            applyTheme(currentTheme);
-
-            themeToggle.addEventListener('click', () => {
-                const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
-                applyTheme(newTheme);
-            });
-        }
         
         // --- Share & Export ---
         const handleShareClick = () => {
             modalTitle.textContent = 'Generate & Share Report';
             modalBody.innerHTML = `
-                <p class="text-slate-600 dark:text-slate-300 text-center mb-4">Select the month and year for the report you want to share.</p>
+                <p class="text-slate-300 text-center mb-4">Select the month and year for the report you want to share.</p>
                 <div class="flex gap-4">
                     <div class="flex-1">
-                        <label for="share-month-select" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Month</label>
-                        <select id="share-month-select" class="month-select mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white"></select>
+                        <label for="share-month-select" class="block text-sm font-medium text-slate-300">Month</label>
+                        <select id="share-month-select" class="month-select mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-white"></select>
                     </div>
                     <div class="flex-1">
-                        <label for="share-year-select" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Year</label>
-                        <select id="share-year-select" class="year-select mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white"></select>
+                        <label for="share-year-select" class="block text-sm font-medium text-slate-300">Year</label>
+                        <select id="share-year-select" class="year-select mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-white"></select>
                     </div>
                 </div>`;
             
@@ -803,9 +790,9 @@
                 o.customerName,
                 o.itemDescription,
                 o.vendorName || '-',
-                `Rs ${o.costPrice.toFixed(2)}`,
-                `Rs ${o.sellingPrice.toFixed(2)}`,
-                `Rs ${o.profit.toFixed(2)}`,
+                formatCurrency(o.costPrice),
+                formatCurrency(o.sellingPrice),
+                formatCurrency(o.profit),
                 o.status
             ]);
             
@@ -813,8 +800,7 @@
             const costs = filteredOrders.reduce((sum, o) => sum + o.costPrice, 0);
             const receivedProfit = filteredOrders.filter(o => o.status === 'received').reduce((sum, o) => sum + o.profit, 0);
             const pendingProfit = filteredOrders.filter(o => o.status === 'pending').reduce((sum, o) => sum + o.profit, 0);
-            const finalY = (doc.autoTable.previous.finalY || 10) + 15;
-
+            
             doc.setFontSize(18);
             doc.text(`RR Creations - Report for ${monthName} ${year}`, 14, 20);
             doc.setFontSize(11);
@@ -835,10 +821,10 @@
             doc.autoTable({
                 startY: summaryY + 4,
                 body: [
-                    ['Total Sales', `Rs ${sales.toFixed(2)}`],
-                    ['Total Costs', `Rs ${costs.toFixed(2)}`],
-                    ['Pending Profit', `Rs ${pendingProfit.toFixed(2)}`],
-                    ['Received Profit', `Rs ${receivedProfit.toFixed(2)}`],
+                    ['Total Sales', formatCurrency(sales)],
+                    ['Total Costs', formatCurrency(costs)],
+                    ['Pending Profit', formatCurrency(pendingProfit)],
+                    ['Received Profit', formatCurrency(receivedProfit)],
                 ],
                 theme: 'grid',
                 columnStyles: { 0: { fontStyle: 'bold' } }
@@ -930,8 +916,9 @@
         
         initFirebase();
         setupReminder();
-        setupTheme();
     </script>
 </body>
 </html>
+
+
 
