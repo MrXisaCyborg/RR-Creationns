@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RR Creations</title>
+    <link rel="icon" href="https://placehold.co/64x64/4f46e5/ffffff?text=RR" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
@@ -434,12 +435,17 @@
             const customerName = customerNameInput.value.trim();
             const itemDescription = itemDescriptionInput.value.trim();
             const vendorName = vendorNameInput.value.trim();
-            const costPrice = parseFloat(costPriceInput.value);
-            const sellingPrice = parseFloat(sellingPriceInput.value);
+            
+            // Sanitize input to handle mobile keyboards that might add commas (e.g., "1,200")
+            const costPriceValue = costPriceInput.value.replace(/,/g, '');
+            const sellingPriceValue = sellingPriceInput.value.replace(/,/g, '');
+
+            const costPrice = parseFloat(costPriceValue);
+            const sellingPrice = parseFloat(sellingPriceValue);
             const paymentMethod = paymentMethodInput.value;
 
             if (!customerName || !itemDescription || isNaN(costPrice) || isNaN(sellingPrice) || sellingPrice < costPrice || !ordersCollection) {
-                showMessageModal('Invalid Input', 'Please fill in all fields correctly. Selling price cannot be less than cost price.');
+                showMessageModal('Invalid Input', 'Please fill in all fields correctly. Selling price must be equal to or greater than the cost price.');
                 return;
             }
 
@@ -919,6 +925,9 @@
     </script>
 </body>
 </html>
+
+
+
 
 
 
