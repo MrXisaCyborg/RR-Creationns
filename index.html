@@ -86,6 +86,34 @@
             color: white;
             font-weight: 600;
         }
+        
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #2DD4BF; /* Theme color */
+            color: #111827; /* Dark text */
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideIn 0.3s ease-out, fadeOut 0.3s ease-in 2.7s;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(100%); }
+        }
+
 
         /* Print Styles */
         @media print {
@@ -273,6 +301,10 @@
                 <p id="no-orders" class="text-center text-slate-400 py-8">No orders yet. Add one to get started!</p>
             </div>
         </div>
+
+        <footer class="text-center text-slate-500 text-sm mt-10 pb-6 no-print">
+            <p>&copy; <span id="copyright-year"></span> Rangriti Creations, Mumbai. All Rights Reserved.</p>
+        </footer>
     </div>
 
     <!-- Action Modal -->
@@ -345,6 +377,27 @@
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             });
+        };
+        
+        const showToast = (message) => {
+            // Remove any existing toast
+            const existingToast = document.querySelector('.toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `
+                <i data-feather="check-circle" class="w-5 h-5"></i>
+                <span class="font-semibold">${message}</span>
+            `;
+            document.body.appendChild(toast);
+            if(typeof feather !== 'undefined') feather.replace();
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000); // Remove after 3 seconds
         };
 
         // --- Data Functions (localStorage) ---
@@ -441,6 +494,7 @@
             allOrders.unshift(newOrder);
             saveOrders();
             orderForm.reset();
+            showToast('Order added successfully!');
             // Reset vendor dropdown specific fields
             vendorSelect.value = '';
             otherVendorContainer.classList.add('hidden');
@@ -566,15 +620,23 @@
                 if (currentFilter === 'all') return true;
                 return order.status === currentFilter;
             });
-
+            
+            const noOrdersEl = document.getElementById('no-orders');
             if (filteredOrders.length > 0) {
-                 if(document.getElementById('no-orders')) {
-                    document.getElementById('no-orders').style.display = 'none';
+                 if(noOrdersEl) {
+                    noOrdersEl.style.display = 'none';
                  }
             } else {
-                const noOrdersEl = document.getElementById('no-orders');
                 if(noOrdersEl) {
                     noOrdersEl.style.display = 'block';
+                } else {
+                     const noOrdersCard = document.createElement('div');
+                     noOrdersCard.id = "no-orders";
+                     noOrdersCard.className = "glass-card text-center text-slate-400 p-12 rounded-2xl";
+                     noOrdersCard.innerHTML = `
+                        <h3 class="text-xl font-semibold text-white">Ready for your first order?</h3>
+                        <p class="mt-2">Fill out the form above to get started!</p>`;
+                    orderList.appendChild(noOrdersCard);
                 }
             }
             
@@ -683,19 +745,35 @@
                     tag: 'test-notification'
                 };
                 new Notification(title, options);
-            } else if (Notification.permission !== 'denied') {
-                Notification.requestPermission().then(permission => {
-                    if (permission === 'granted') {
-                        sendTestNotification(); // Retry after getting permission
+            } else {
+                handleNotificationBellClick(); // Guide user through permissions
+            }
+        }
+
+        const handleNotificationBellClick = () => {
+            if (!('Notification' in window)) {
+                showMessageModal('Not Supported', 'Sorry, your browser does not support notifications.');
+                return;
+            }
+
+            const permission = Notification.permission;
+
+            if (permission === 'granted') {
+                showMessageModal('Notifications Active', 'Reminders are already enabled. You will be notified of pending payments after 11 PM.');
+            } else if (permission === 'denied') {
+                showMessageModal('Notifications Blocked', 'You have blocked notifications. To receive reminders, please enable them in your browser or system settings.');
+            } else { // permission is 'default'
+                Notification.requestPermission().then(newPermission => {
+                    if (newPermission === 'granted') {
+                        showMessageModal('Notifications Enabled', 'You will now receive reminders for pending payments after 11 PM.');
+                        setInterval(checkTimeForReminder, 60 * 1000); // Start the checker
                     } else {
-                        showMessageModal('Permission Denied', 'You have blocked notifications. Please enable them in your browser settings.');
+                        showMessageModal('Permission Not Granted', 'You have chosen not to receive notifications.');
                     }
                     updateNotificationBellUI();
                 });
-            } else {
-                 showMessageModal('Permission Denied', 'You have blocked notifications. Please enable them in your browser settings.');
             }
-        }
+        };
 
         function updateNotificationBellUI() {
             const bellSVG = notificationBtn.querySelector('svg');
@@ -726,14 +804,7 @@
             if (!('Notification' in window) || Notification.permission === "denied") return;
             if (Notification.permission === "granted") setInterval(checkTimeForReminder, 60 * 1000);
 
-            notificationBtn.addEventListener('click', () => {
-                if (Notification.permission !== "denied") {
-                    Notification.requestPermission().then(permission => {
-                        updateNotificationBellUI();
-                        if (permission === "granted") setInterval(checkTimeForReminder, 60 * 1000);
-                    });
-                }
-            });
+            notificationBtn.addEventListener('click', handleNotificationBellClick);
         }
 
         function checkTimeForReminder() {
@@ -965,6 +1036,7 @@
             loadOrders();
 
             const now = new Date();
+            document.getElementById('copyright-year').textContent = now.getFullYear();
             const recapContainer = document.getElementById('recap-container');
             if (recapContainer) {
                 setupDateSelectors(recapContainer, now.getMonth(), now.getFullYear());
@@ -984,6 +1056,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
