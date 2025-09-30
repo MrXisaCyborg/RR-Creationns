@@ -237,7 +237,7 @@
                         <input type="number" id="selling-price" placeholder="e.g., 1200" min="0" step="0.01" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-white" required>
                     </div>
                 </div>
-                <button id="add-order-btn" type="submit" class="w-full bg-indigo-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-400 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>Connecting...</button>
+                <button id="add-order-btn" type="submit" class="w-full bg-indigo-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-400 transition-colors duration-200">Add Order</button>
             </form>
         </div>
 
@@ -318,17 +318,11 @@
     </div>
 
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
+    <script>
         // --- App State & Elements ---
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "AIza...", authDomain: "...", projectId: "..."};
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'rr-creations-app';
         const { jsPDF } = window.jspdf;
+        const STORAGE_KEY = 'rr-creations-orders';
 
-        let db, auth, userId = null, ordersCollection;
         let allOrders = []; // Local cache of all orders
         let itemToModifyId = null;
         let currentModifyAction = null;
@@ -376,67 +370,39 @@
             });
         };
 
-        // --- Firebase Initialization ---
-        async function initFirebase() {
-            const app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-            setLogLevel('debug');
-
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    userId = user.uid;
-                    setupAppForUser();
+        // --- Data Functions (localStorage) ---
+        const loadOrders = () => {
+            try {
+                const ordersJson = localStorage.getItem(STORAGE_KEY);
+                if (ordersJson) {
+                    allOrders = JSON.parse(ordersJson);
+                    // Ensure dates are numbers for sorting
+                    allOrders.forEach(o => { o.createdAt = Number(o.createdAt) });
+                    allOrders.sort((a, b) => b.createdAt - a.createdAt);
                 } else {
-                    try {
-                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                            await signInWithCustomToken(auth, __initial_auth_token);
-                        } else {
-                            await signInAnonymously(auth);
-                        }
-                    } catch (error) {
-                        console.error("Error signing in:", error);
-                        addOrderBtn.textContent = 'Offline - Refresh';
-                        showMessageModal('Authentication Error', 'Could not connect to the database. Please refresh the page and try again.');
-                    }
+                    allOrders = [];
                 }
-            });
-        }
+            } catch(e) {
+                console.error("Error loading orders from localStorage", e);
+                allOrders = [];
+            }
+        };
 
-        function setupAppForUser() {
-            if (!userId) return;
-            const collectionPath = `artifacts/${appId}/users/${userId}/orders`;
-            ordersCollection = collection(db, collectionPath);
-
-            addOrderBtn.disabled = false;
-            addOrderBtn.textContent = 'Add Order';
-            
-            onSnapshot(ordersCollection, (snapshot) => {
-                const fetchedOrders = [];
-                snapshot.forEach((doc) => {
-                    fetchedOrders.push({ id: doc.id, ...doc.data() });
-                });
-                fetchedOrders.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-                allOrders = fetchedOrders; 
-                
-                const recapContainer = document.getElementById('recap-container');
-                const now = new Date();
-                if (recapContainer) {
-                    const selectedMonth = monthSelect.value ? parseInt(monthSelect.value) : now.getMonth();
-                    const selectedYear = yearSelect.value ? parseInt(yearSelect.value) : now.getFullYear();
-                    setupDateSelectors(recapContainer, selectedMonth, selectedYear);
-                    monthSelect.value = selectedMonth;
-                    yearSelect.value = selectedYear;
-                }
-
-                renderOrders(); 
-                updateTotals();
-                calculateMonthlyRecap();
-            });
-        }
+        const saveOrders = () => {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(allOrders));
+            } catch(e) {
+                console.error("Error saving orders to localStorage", e);
+                showMessageModal('Save Error', 'Could not save data to your device. Your device storage might be full.');
+            }
+            // After saving, re-render everything
+            renderOrders();
+            updateTotals();
+            calculateMonthlyRecap();
+        };
 
         // --- Core Functions ---
-        const addOrder = async (e) => {
+        const addOrder = (e) => {
             e.preventDefault();
             const customerName = customerNameInput.value.trim();
             const itemDescription = itemDescriptionInput.value.trim();
@@ -464,44 +430,53 @@
             }
 
             const profit = sellingPrice - costPrice;
-            try {
-                await addDoc(ordersCollection, {
-                    customerName,
-                    itemDescription,
-                    vendorName,
-                    costPrice,
-                    sellingPrice,
-                    profit,
-                    paymentMethod,
-                    status: 'pending',
-                    createdAt: new Date(),
-                    isArchived: false
-                });
-                orderForm.reset();
-            } catch (error) {
-                console.error("Error adding order: ", error);
-                showMessageModal('Save Error', 'Could not save the order. Please try again.');
+            
+            const newOrder = {
+                id: crypto.randomUUID(),
+                customerName,
+                itemDescription,
+                vendorName,
+                costPrice,
+                sellingPrice,
+                profit,
+                paymentMethod,
+                status: 'pending',
+                createdAt: Date.now(),
+                isArchived: false
+            };
+
+            allOrders.unshift(newOrder);
+            saveOrders();
+            orderForm.reset();
+        };
+        
+        const updateStatus = (id, newStatus) => {
+            const orderIndex = allOrders.findIndex(o => o.id === id);
+            if (orderIndex > -1) {
+                allOrders[orderIndex].status = newStatus;
+                saveOrders();
+            }
+        };
+
+        const archiveOrder = (id) => {
+            const orderIndex = allOrders.findIndex(o => o.id === id);
+            if (orderIndex > -1) {
+                allOrders[orderIndex].isArchived = true;
+                saveOrders();
             }
         };
         
-        const updateStatus = async (id, newStatus) => {
-            const orderDoc = doc(db, `artifacts/${appId}/users/${userId}/orders`, id);
-            await updateDoc(orderDoc, { status: newStatus });
+        const unarchiveOrder = (id) => {
+            const orderIndex = allOrders.findIndex(o => o.id === id);
+            if (orderIndex > -1) {
+                allOrders[orderIndex].isArchived = false;
+                saveOrders();
+            }
         };
 
-        const archiveOrder = async (id) => {
-            const orderDoc = doc(db, `artifacts/${appId}/users/${userId}/orders`, id);
-            await updateDoc(orderDoc, { isArchived: true });
-        };
-        
-        const unarchiveOrder = async (id) => {
-            const orderDoc = doc(db, `artifacts/${appId}/users/${userId}/orders`, id);
-            await updateDoc(orderDoc, { isArchived: false });
-        };
-
-        const deleteOrder = async (id) => {
-            const orderDoc = doc(db, `artifacts/${appId}/users/${userId}/orders`, id);
-            await deleteDoc(orderDoc);
+        const deleteOrder = (id) => {
+            allOrders = allOrders.filter(o => o.id !== id);
+            saveOrders();
         };
         
         // --- Modal Functions ---
@@ -549,19 +524,15 @@
             actionModal.style.display = 'flex';
         }
 
-        const handleConfirm = async () => {
+        const handleConfirm = () => {
             if (!itemToModifyId || !currentModifyAction) return;
-            try {
-                if (currentModifyAction === 'archive') {
-                    await archiveOrder(itemToModifyId);
-                } else if (currentModifyAction === 'delete') {
-                    await deleteOrder(itemToModifyId);
-                }
-            } catch (error) {
-                console.error(`Error performing action '${currentModifyAction}':`, error);
-            } finally {
-                hideActionModal();
+            
+            if (currentModifyAction === 'archive') {
+                archiveOrder(itemToModifyId);
+            } else if (currentModifyAction === 'delete') {
+                deleteOrder(itemToModifyId);
             }
+            hideActionModal();
         };
         
         const calculateMonthlyRecap = () => {
@@ -569,8 +540,8 @@
             const selectedYear = parseInt(yearSelect.value);
 
             const filteredOrders = allOrders.filter(order => {
-                if (order.isArchived || !order.createdAt || !order.createdAt.seconds) return false;
-                const orderDate = new Date(order.createdAt.seconds * 1000);
+                if (order.isArchived || !order.createdAt) return false;
+                const orderDate = new Date(order.createdAt);
                 return orderDate.getMonth() === selectedMonth && orderDate.getFullYear() === selectedYear;
             });
             
@@ -678,7 +649,7 @@
                 monthSelectEl.appendChild(option);
             });
             
-            const uniqueYears = [...new Set(allOrders.map(o => o.createdAt ? new Date(o.createdAt.seconds * 1000).getFullYear() : currentYear))];
+            const uniqueYears = [...new Set(allOrders.map(o => o.createdAt ? new Date(o.createdAt).getFullYear() : currentYear))];
             if (!uniqueYears.includes(currentYear)) uniqueYears.push(currentYear);
             uniqueYears.sort((a,b) => b - a);
 
@@ -795,8 +766,8 @@
             const doc = new jsPDF();
             
             const filteredOrders = allOrders.filter(order => {
-                if (order.isArchived || !order.createdAt || !order.createdAt.seconds) return false;
-                const orderDate = new Date(order.createdAt.seconds * 1000);
+                if (order.isArchived || !order.createdAt) return false;
+                const orderDate = new Date(order.createdAt);
                 return orderDate.getMonth() === month && orderDate.getFullYear() === year;
             });
 
@@ -807,7 +778,7 @@
 
             const head = [['Date', 'Customer', 'Item', 'Vendor', 'Cost', 'Sale', 'Profit', 'Status']];
             const body = filteredOrders.map(o => [
-                new Date(o.createdAt.seconds * 1000).toLocaleDateString(),
+                new Date(o.createdAt).toLocaleDateString(),
                 o.customerName,
                 o.itemDescription,
                 o.vendorName || '-',
@@ -929,17 +900,28 @@
         });
         
         // --- App Initialization ---
-        const now = new Date();
-        const recapContainer = document.getElementById('recap-container');
-        if (recapContainer) {
-            setupDateSelectors(recapContainer, now.getMonth(), now.getFullYear());
-        }
-        
-        initFirebase();
-        setupReminder();
+        document.addEventListener('DOMContentLoaded', () => {
+            loadOrders();
+
+            const now = new Date();
+            const recapContainer = document.getElementById('recap-container');
+            if (recapContainer) {
+                setupDateSelectors(recapContainer, now.getMonth(), now.getFullYear());
+            }
+
+            renderOrders();
+            updateTotals();
+            calculateMonthlyRecap();
+            setupReminder();
+            addOrderBtn.disabled = false;
+            addOrderBtn.textContent = 'Add Order';
+        });
+
     </script>
 </body>
 </html>
+
+
 
 
 
