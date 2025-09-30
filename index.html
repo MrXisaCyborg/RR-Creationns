@@ -396,7 +396,7 @@
                         }
                     } catch (error) {
                         console.error("Error signing in:", error);
-                        addOrderBtn.textContent = 'Connection Failed';
+                        addOrderBtn.textContent = 'Offline - Refresh';
                         showMessageModal('Authentication Error', 'Could not connect to the database. Please refresh the page and try again.');
                     }
                 }
@@ -940,6 +940,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
