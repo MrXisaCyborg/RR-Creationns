@@ -396,7 +396,8 @@
                         }
                     } catch (error) {
                         console.error("Error signing in:", error);
-                        addOrderBtn.textContent = 'Auth Failed';
+                        addOrderBtn.textContent = 'Connection Failed';
+                        showMessageModal('Authentication Error', 'Could not connect to the database. Please refresh the page and try again.');
                     }
                 }
             });
@@ -464,7 +465,6 @@
 
             const profit = sellingPrice - costPrice;
             try {
-                // The check for ordersCollection is removed because the button's disabled state handles this.
                 await addDoc(ordersCollection, {
                     customerName,
                     itemDescription,
@@ -940,8 +940,4 @@
     </script>
 </body>
 </html>
-
-
-
-
 
