@@ -209,24 +209,28 @@
                         <label for="customer-name" class="block text-sm font-medium text-slate-300">Customer Name</label>
                         <input type="text" id="customer-name" placeholder="e.g., Anjali Sharma" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-white" required>
                     </div>
-                    <div>
+                     <div>
                         <label for="item-description" class="block text-sm font-medium text-slate-300">Item Description</label>
                         <input type="text" id="item-description" placeholder="e.g., Blue Kurti" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-white" required>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label for="vendor-name" class="block text-sm font-medium text-slate-300">Vendor Name (Optional)</label>
-                        <input type="text" id="vendor-name" placeholder="e.g., Surat Textiles" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-white">
-                    </div>
-                    <div>
-                        <label for="payment-method" class="block text-sm font-medium text-slate-300">Payment Method</label>
-                        <select id="payment-method" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-white" required>
-                            <option value="GPay">GPay</option>
-                            <option value="Cash">Cash</option>
-                        </select>
-                    </div>
+
+                <div>
+                    <label for="vendor-select" class="block text-sm font-medium text-slate-300">Vendor Name</label>
+                    <select id="vendor-select" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-white">
+                        <option value="">Select Vendor</option>
+                        <option value="Dilkush">Dilkush</option>
+                        <option value="Shubham">Shubham</option>
+                        <option value="Shubhi">Shubhi</option>
+                        <option value="Others">Others</option>
+                    </select>
                 </div>
+
+                <div id="other-vendor-container" class="hidden">
+                    <label for="vendor-name-other" class="block text-sm font-medium text-slate-300">Other Vendor Name</label>
+                    <input type="text" id="vendor-name-other" placeholder="Enter Vendor Name" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-white">
+                </div>
+                
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label for="cost-price" class="block text-sm font-medium text-slate-300">Cost Price (₹)</label>
@@ -237,6 +241,21 @@
                         <input type="number" id="selling-price" placeholder="e.g., 1200" min="0" step="0.01" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-white" required>
                     </div>
                 </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                     <div>
+                        <label for="discount" class="block text-sm font-medium text-slate-300">Discount (₹)</label>
+                        <input type="number" id="discount" placeholder="0" min="0" step="0.01" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-white">
+                    </div>
+                    <div>
+                        <label for="payment-method" class="block text-sm font-medium text-slate-300">Payment Method</label>
+                        <select id="payment-method" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-white" required>
+                            <option value="GPay">GPay</option>
+                            <option value="Cash">Cash</option>
+                        </select>
+                    </div>
+                </div>
+
                 <button id="add-order-btn" type="submit" class="w-full bg-indigo-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-400 transition-colors duration-200">Add Order</button>
             </form>
         </div>
@@ -247,7 +266,7 @@
                 <h2 class="text-xl font-bold mb-4">Monthly Recap</h2>
                  <div class="no-print -mt-2 flex items-center">
                      <button id="share-report" title="Share Report" class="p-2 text-slate-400 hover:text-indigo-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-share-2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-share-2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
                      </button>
                      <button id="export-pdf" title="Export as PDF" class="p-2 text-slate-400 hover:text-indigo-400">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
@@ -331,10 +350,13 @@
         const orderForm = document.getElementById('order-form');
         const customerNameInput = document.getElementById('customer-name');
         const itemDescriptionInput = document.getElementById('item-description');
-        const vendorNameInput = document.getElementById('vendor-name');
+        const vendorSelect = document.getElementById('vendor-select');
+        const otherVendorContainer = document.getElementById('other-vendor-container');
+        const vendorNameOtherInput = document.getElementById('vendor-name-other');
         const costPriceInput = document.getElementById('cost-price');
         const sellingPriceInput = document.getElementById('selling-price');
         const paymentMethodInput = document.getElementById('payment-method');
+        const discountInput = document.getElementById('discount');
         const orderList = document.getElementById('order-list');
         const totalPendingEl = document.getElementById('total-pending');
         const totalReceivedEl = document.getElementById('total-received');
@@ -358,6 +380,12 @@
         const shareReportBtn = document.getElementById('share-report');
         const printDateEl = document.getElementById('print-date');
         const printTitleEl = document.getElementById('print-title');
+
+        const presetDiscounts = {
+            'Dilkush': 100,
+            'Shubham': 75,
+            'Shubhi': 30
+        };
 
         // --- Helper Functions ---
         const formatCurrency = (num) => {
@@ -404,32 +432,46 @@
         // --- Core Functions ---
         const addOrder = (e) => {
             e.preventDefault();
+            
             const customerName = customerNameInput.value.trim();
+            const selectedVendor = vendorSelect.value;
+            const vendorName = selectedVendor === 'Others' ? vendorNameOtherInput.value.trim() : selectedVendor;
             const itemDescription = itemDescriptionInput.value.trim();
-            const vendorName = vendorNameInput.value.trim();
             
             const costPriceValue = costPriceInput.value.replace(/,/g, '');
             const sellingPriceValue = sellingPriceInput.value.replace(/,/g, '');
+            const discountValue = discountInput.value.replace(/,/g, '');
 
             const costPrice = parseFloat(costPriceValue);
-            const sellingPrice = parseFloat(sellingPriceValue);
+            const originalSellingPrice = parseFloat(sellingPriceValue);
+            const discount = parseFloat(discountValue) || 0;
+            const finalSellingPrice = originalSellingPrice - discount;
+
             const paymentMethod = paymentMethodInput.value;
 
             // --- Improved Validation ---
-            if (!customerName || !itemDescription) {
-                showMessageModal('Missing Information', 'Please enter both a customer name and an item description.');
+             if (!customerName) {
+                showMessageModal('Missing Customer', 'Please enter a customer name.');
                 return;
             }
-            if (isNaN(costPrice) || isNaN(sellingPrice) || costPrice < 0 || sellingPrice < 0) {
+            if (!vendorName) {
+                showMessageModal('Missing Vendor', 'Please select or enter a vendor name.');
+                return;
+            }
+            if (!itemDescription) {
+                showMessageModal('Missing Information', 'Please enter an item description.');
+                return;
+            }
+            if (isNaN(costPrice) || isNaN(originalSellingPrice) || costPrice < 0 || originalSellingPrice < 0) {
                 showMessageModal('Invalid Price', 'Please enter valid numbers for the cost and selling price.');
                 return;
             }
-            if (sellingPrice < costPrice) {
-                showMessageModal('Invalid Pricing', 'The selling price cannot be less than the cost price.');
+            if (finalSellingPrice < costPrice) {
+                showMessageModal('Invalid Pricing', 'The final price (after discount) cannot be less than the cost price.');
                 return;
             }
 
-            const profit = sellingPrice - costPrice;
+            const profit = finalSellingPrice - costPrice;
             
             const newOrder = {
                 id: crypto.randomUUID(),
@@ -437,7 +479,9 @@
                 itemDescription,
                 vendorName,
                 costPrice,
-                sellingPrice,
+                sellingPrice: originalSellingPrice,
+                discount,
+                finalSellingPrice,
                 profit,
                 paymentMethod,
                 status: 'pending',
@@ -448,6 +492,11 @@
             allOrders.unshift(newOrder);
             saveOrders();
             orderForm.reset();
+            // Reset vendor dropdown specific fields
+            vendorSelect.value = '';
+            otherVendorContainer.classList.add('hidden');
+            vendorNameOtherInput.required = false;
+            discountInput.readOnly = false;
         };
         
         const updateStatus = (id, newStatus) => {
@@ -545,7 +594,7 @@
                 return orderDate.getMonth() === selectedMonth && orderDate.getFullYear() === selectedYear;
             });
             
-            const sales = filteredOrders.reduce((sum, o) => sum + o.sellingPrice, 0);
+            const sales = filteredOrders.reduce((sum, o) => sum + (o.finalSellingPrice ?? o.sellingPrice), 0);
             const costs = filteredOrders.reduce((sum, o) => sum + o.costPrice, 0);
             const receivedProfit = filteredOrders.filter(o => o.status === 'received').reduce((sum, o) => sum + o.profit, 0);
             const pendingProfit = filteredOrders.filter(o => o.status === 'pending').reduce((sum, o) => sum + o.profit, 0);
@@ -580,6 +629,7 @@
                 const isPending = order.status === 'pending';
                 const cardClass = isPending ? 'status-pending' : 'status-received';
                 const statusTextClass = isPending ? 'text-status-pending' : 'text-status-received';
+                const finalPrice = order.finalSellingPrice ?? order.sellingPrice;
 
                 const orderEl = document.createElement('div');
                 orderEl.className = `p-4 rounded-lg shadow-md flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 ${cardClass} dark:border order-card`;
@@ -590,6 +640,8 @@
                         ${order.vendorName ? `<p class="text-xs text-slate-400 mt-1">Sold by: <span class="font-medium">${order.vendorName}</span></p>` : ''}
                         <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm mt-2">
                            <p><span class="font-medium text-slate-400">Sale:</span> ${formatCurrency(order.sellingPrice)}</p>
+                           ${order.discount > 0 ? `<p><span class="font-medium text-slate-400">Discount:</span> - ${formatCurrency(order.discount)}</p>` : ''}
+                           <p><span class="font-bold text-slate-300">Final:</span> ${formatCurrency(finalPrice)}</p>
                            <p><span class="font-medium text-slate-400">Cost:</span> ${formatCurrency(order.costPrice)}</p>
                            <p><span class="font-bold text-green-400">Profit:</span> ${formatCurrency(order.profit)}</p>
                            ${order.paymentMethod ? `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${order.paymentMethod === 'GPay' ? 'bg-blue-900 text-blue-200' : 'bg-emerald-900 text-emerald-200'}">${order.paymentMethod}</span>` : ''}
@@ -776,19 +828,20 @@
                  return;
             }
 
-            const head = [['Date', 'Customer', 'Item', 'Vendor', 'Cost', 'Sale', 'Profit', 'Status']];
+            const head = [['Date', 'Customer', 'Item', 'Sale', 'Discount', 'Final Price', 'Cost', 'Profit', 'Status']];
             const body = filteredOrders.map(o => [
                 new Date(o.createdAt).toLocaleDateString(),
                 o.customerName,
                 o.itemDescription,
-                o.vendorName || '-',
-                formatCurrency(o.costPrice),
                 formatCurrency(o.sellingPrice),
+                formatCurrency(o.discount || 0),
+                formatCurrency(o.finalSellingPrice ?? o.sellingPrice),
+                formatCurrency(o.costPrice),
                 formatCurrency(o.profit),
                 o.status
             ]);
             
-            const sales = filteredOrders.reduce((sum, o) => sum + o.sellingPrice, 0);
+            const sales = filteredOrders.reduce((sum, o) => sum + (o.finalSellingPrice ?? o.sellingPrice), 0);
             const costs = filteredOrders.reduce((sum, o) => sum + o.costPrice, 0);
             const receivedProfit = filteredOrders.filter(o => o.status === 'received').reduce((sum, o) => sum + o.profit, 0);
             const pendingProfit = filteredOrders.filter(o => o.status === 'pending').reduce((sum, o) => sum + o.profit, 0);
@@ -813,7 +866,7 @@
             doc.autoTable({
                 startY: summaryY + 4,
                 body: [
-                    ['Total Sales', formatCurrency(sales)],
+                    ['Total Final Sales', formatCurrency(sales)],
                     ['Total Costs', formatCurrency(costs)],
                     ['Pending Profit', formatCurrency(pendingProfit)],
                     ['Received Profit', formatCurrency(receivedProfit)],
@@ -844,6 +897,30 @@
         };
 
         // --- Event Listeners ---
+        vendorSelect.addEventListener('change', (e) => {
+            const selectedVendor = e.target.value;
+            if (selectedVendor === 'Others') {
+                otherVendorContainer.classList.remove('hidden');
+                vendorNameOtherInput.required = true;
+                discountInput.value = '';
+                discountInput.readOnly = false;
+                discountInput.placeholder = 'e.g., 50';
+            } else if (presetDiscounts[selectedVendor]) {
+                otherVendorContainer.classList.add('hidden');
+                vendorNameOtherInput.required = false;
+                vendorNameOtherInput.value = '';
+                discountInput.value = presetDiscounts[selectedVendor];
+                discountInput.readOnly = true;
+            } else {
+                otherVendorContainer.classList.add('hidden');
+                vendorNameOtherInput.required = false;
+                vendorNameOtherInput.value = '';
+                discountInput.value = '';
+                discountInput.readOnly = false;
+                discountInput.placeholder = '0';
+            }
+        });
+
         orderForm.addEventListener('submit', addOrder);
         orderList.addEventListener('click', (e) => {
             const button = e.target.closest('button');
@@ -913,13 +990,13 @@
             updateTotals();
             calculateMonthlyRecap();
             setupReminder();
-            addOrderBtn.disabled = false;
-            addOrderBtn.textContent = 'Add Order';
         });
 
     </script>
 </body>
 </html>
+
+
 
 
 
