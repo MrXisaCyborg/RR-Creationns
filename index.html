@@ -436,7 +436,6 @@
             const itemDescription = itemDescriptionInput.value.trim();
             const vendorName = vendorNameInput.value.trim();
             
-            // Sanitize input to handle mobile keyboards that might add commas (e.g., "1,200")
             const costPriceValue = costPriceInput.value.replace(/,/g, '');
             const sellingPriceValue = sellingPriceInput.value.replace(/,/g, '');
 
@@ -444,8 +443,21 @@
             const sellingPrice = parseFloat(sellingPriceValue);
             const paymentMethod = paymentMethodInput.value;
 
-            if (!customerName || !itemDescription || isNaN(costPrice) || isNaN(sellingPrice) || sellingPrice < costPrice || !ordersCollection) {
-                showMessageModal('Invalid Input', 'Please fill in all fields correctly. Selling price must be equal to or greater than the cost price.');
+            // --- Improved Validation ---
+            if (!customerName || !itemDescription) {
+                showMessageModal('Missing Information', 'Please enter both a customer name and an item description.');
+                return;
+            }
+            if (isNaN(costPrice) || isNaN(sellingPrice) || costPrice < 0 || sellingPrice < 0) {
+                showMessageModal('Invalid Price', 'Please enter valid numbers for the cost and selling price.');
+                return;
+            }
+            if (sellingPrice < costPrice) {
+                showMessageModal('Invalid Pricing', 'The selling price cannot be less than the cost price.');
+                return;
+            }
+            if (!ordersCollection) {
+                showMessageModal('Connection Error', 'Cannot save the order. Please check your connection and try again.');
                 return;
             }
 
@@ -466,6 +478,7 @@
                 orderForm.reset();
             } catch (error) {
                 console.error("Error adding order: ", error);
+                showMessageModal('Save Error', 'Could not save the order. Please try again.');
             }
         };
         
@@ -925,9 +938,5 @@
     </script>
 </body>
 </html>
-
-
-
-
-
+"
 
