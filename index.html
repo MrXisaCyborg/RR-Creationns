@@ -86,14 +86,14 @@
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 0.5rem center;
             background-size: 1.5em 1.5em;
             padding-right: 2.5rem;
         }
         .dark select {
-             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
         }
         .filter-btn {
             transition: all 0.2s ease-in-out;
@@ -176,7 +176,7 @@
             <p class="text-slate-400 mt-1">Manage your reselling business finances.</p>
             <div class="absolute top-0 right-0 flex items-center gap-2">
                 <button id="notification-btn" title="Enable daily reminders" class="p-2 text-slate-400 hover:text-indigo-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bell"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bell"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
                 </button>
             </div>
         </header>
@@ -641,6 +641,7 @@
                            <p><span class="font-medium text-slate-400">Sale:</span> ${formatCurrency(order.sellingPrice)}</p>
                            <p><span class="font-medium text-slate-400">Cost:</span> ${formatCurrency(order.costPrice)}</p>
                            ${order.discount > 0 ? `<p><span class="font-medium text-slate-400">Discount:</span> - ${formatCurrency(order.discount)}</p>` : ''}
+                           ${order.discount > 0 ? `<p><span class="font-bold text-slate-300">Final Cost:</span> ${formatCurrency(order.finalCostPrice)}</p>` : ''}
                            <p><span class="font-bold text-green-400">Profit:</span> ${formatCurrency(order.profit)}</p>
                            ${order.paymentMethod ? `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${order.paymentMethod === 'GPay' ? 'bg-blue-900 text-blue-200' : 'bg-emerald-900 text-emerald-200'}">${order.paymentMethod}</span>` : ''}
                         </div>
@@ -651,7 +652,7 @@
                             ${order.isArchived ? 
                                 `<button data-id="${order.id}" data-action="unarchive" class="bg-sky-500 text-white flex-grow sm:flex-grow-0 text-sm font-semibold py-2 px-3 rounded-md transition-transform transform hover:scale-105">Unarchive</button>
                                  <button data-id="${order.id}" data-action="delete" class="bg-red-500 text-white p-2 rounded-md hover:bg-red-600 transition-transform transform hover:scale-105" title="Delete Permanently">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
                                  </button>`
                             :
                             isPending ? 
@@ -659,7 +660,7 @@
                             `<button data-id="${order.id}" data-action="pend" class="btn-pending flex-grow sm:flex-grow-0 text-sm font-semibold py-2 px-3 rounded-md transition-transform transform hover:scale-105">Pending</button>`
                             }
                             ${!order.isArchived ? `<button data-id="${order.id}" data-action="archive" class="bg-slate-400 text-white p-2 rounded-md hover:bg-slate-500 transition-transform transform hover:scale-105" title="Archive">
-                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8"></path><path d="M1 3h22v5H1z"></path><path d="M10 12h4"></path></svg>
+                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8"></path><path d="M1 3h22v5H1z"></path><path d="M10 12h4"></path></svg>
                             </button>` : ''}
                         </div>
                     </div>
@@ -994,6 +995,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
