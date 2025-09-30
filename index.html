@@ -102,9 +102,8 @@
         }
 
         .active-filter {
-            background-color: #6366f1;
-            color: white;
-            font-weight: 600;
+            background-color: #6366f1 !important;
+            color: white !important;
         }
         
         /* Toast Notification */
@@ -310,14 +309,20 @@
 
         <!-- Order List -->
         <div class="fade-in" style="animation-delay: 0.4s;">
-            <div class="flex items-center justify-between mb-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4">
                  <h2 class="text-2xl font-bold">Order History</h2>
-                 <div id="filter-container" class="flex border border-slate-600 rounded-lg p-0.5 bg-slate-700/50 no-print">
-                    <button data-filter="all" class="filter-btn active-filter text-sm px-3 py-1 rounded-md">All</button>
-                    <button data-filter="pending" class="filter-btn text-sm px-3 py-1 rounded-md">Pending</button>
-                    <button data-filter="received" class="filter-btn text-sm px-3 py-1 rounded-md">Received</button>
-                    <button data-filter="archived" class="filter-btn text-sm px-3 py-1 rounded-md">Archived</button>
-                 </div>
+                 <div class="relative no-print self-end sm:self-center">
+                    <button id="filter-btn" class="p-2 text-slate-300 hover:text-white transition-colors rounded-lg bg-slate-700/50 border border-slate-600 flex items-center gap-2">
+                        <i data-feather="filter" class="w-5 h-5"></i>
+                        <span id="current-filter-label" class="text-sm font-semibold capitalize">All</span>
+                    </button>
+                    <div id="filter-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-slate-800 border border-slate-600 rounded-lg shadow-lg z-10">
+                        <a href="#" class="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 filter-option" data-filter="all">All</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 filter-option" data-filter="pending">Pending</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 filter-option" data-filter="received">Received</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 filter-option" data-filter="archived">Archived</a>
+                    </div>
+                </div>
             </div>
             <div id="order-list" class="space-y-4">
                 
@@ -376,7 +381,10 @@
         const modalBody = document.getElementById('modal-body');
         const modalFooter = document.getElementById('modal-footer');
 
-        const filterContainer = document.getElementById('filter-container');
+        const filterBtn = document.getElementById('filter-btn');
+        const filterDropdown = document.getElementById('filter-dropdown');
+        const currentFilterLabel = document.getElementById('current-filter-label');
+
         const exportPdfBtn = document.getElementById('export-pdf');
         const shareReportBtn = document.getElementById('share-report');
         const printDateEl = document.getElementById('print-date');
@@ -580,6 +588,7 @@
         };
         
         const calculateMonthlyRecap = () => {
+            if (!monthSelect.value || !yearSelect.value) return;
             const selectedMonth = parseInt(monthSelect.value);
             const selectedYear = parseInt(yearSelect.value);
 
@@ -843,13 +852,27 @@
             else if (action === 'unarchive') { unarchiveOrder(id); }
         });
 
-        filterContainer.addEventListener('click', (e) => {
-            const button = e.target.closest('button');
-            if (!button) return;
-            currentFilter = button.dataset.filter;
-            filterContainer.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active-filter'));
-            button.classList.add('active-filter');
-            renderOrders();
+        filterBtn.addEventListener('click', () => {
+            filterDropdown.classList.toggle('hidden');
+        });
+
+        window.addEventListener('click', (e) => {
+            if (!filterBtn.contains(e.target) && !filterDropdown.contains(e.target)) {
+                filterDropdown.classList.add('hidden');
+            }
+        });
+
+        filterDropdown.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = e.target.closest('.filter-option');
+            if(target) {
+                currentFilter = target.dataset.filter;
+                currentFilterLabel.textContent = target.textContent;
+                filterDropdown.querySelectorAll('.filter-option').forEach(opt => opt.classList.remove('active-filter'));
+                target.classList.add('active-filter');
+                renderOrders();
+                filterDropdown.classList.add('hidden');
+            }
         });
         
         monthSelect.addEventListener('change', calculateMonthlyRecap);
@@ -906,6 +929,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
