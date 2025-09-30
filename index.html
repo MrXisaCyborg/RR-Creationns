@@ -396,6 +396,7 @@
                         }
                     } catch (error) {
                         console.error("Error signing in:", error);
+                        addOrderBtn.textContent = 'Auth Failed';
                     }
                 }
             });
@@ -460,13 +461,10 @@
                 showMessageModal('Invalid Pricing', 'The selling price cannot be less than the cost price.');
                 return;
             }
-            if (!ordersCollection) {
-                showMessageModal('Connection Error', 'Cannot save the order. Please check your connection and try again.');
-                return;
-            }
 
             const profit = sellingPrice - costPrice;
             try {
+                // The check for ordersCollection is removed because the button's disabled state handles this.
                 await addDoc(ordersCollection, {
                     customerName,
                     itemDescription,
@@ -942,6 +940,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
