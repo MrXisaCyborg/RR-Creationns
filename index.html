@@ -66,9 +66,29 @@
         }
         
         /* Modal Styles */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
         .modal-content {
             background: linear-gradient(135deg, #2d3748, #1a202c);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            width: 90%;
+            max-width: 400px;
+            padding: 2rem;
         }
 
         select {
@@ -91,8 +111,10 @@
         .toast {
             position: fixed;
             top: 20px;
-            right: 20px;
-            background-color: #2DD4BF; /* Theme color */
+            left: 50%;
+            transform: translateX(-50%);
+            width: auto;
+            max-width: 90%;
             color: #111827; /* Dark text */
             padding: 1rem 1.5rem;
             border-radius: 0.75rem;
@@ -101,17 +123,25 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            animation: slideIn 0.3s ease-out, fadeOut 0.3s ease-in 2.7s;
+            animation: slideInDown 0.4s ease-out, slideOutUp 0.4s ease-in 2.6s;
         }
 
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        .toast-success {
+            background-color: #2DD4BF; /* Theme color */
         }
 
-        @keyframes fadeOut {
-            from { opacity: 1; transform: translateX(0); }
-            to { opacity: 0; transform: translateX(100%); }
+        .toast-error {
+             background-color: #F87171; /* red-400 */
+        }
+
+        @keyframes slideInDown {
+            from { transform: translate(-50%, -100%); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+
+        @keyframes slideOutUp {
+            from { opacity: 1; transform: translate(-50%, 0); }
+            to { opacity: 0; transform: translate(-50%, -100%); }
         }
 
 
@@ -147,14 +177,6 @@
         <header class="text-center mb-8 relative no-print fade-in">
             <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">RR Creations</h1>
             <p class="text-slate-400 mt-2">Your Modern Reselling Bookkeeper</p>
-            <div class="absolute top-0 right-0 flex items-center gap-2">
-                <button id="test-notification-btn" title="Send a test notification" class="p-2 text-slate-400 hover:text-teal-300 transition-colors">
-                    <i data-feather="send"></i>
-                </button>
-                <button id="notification-btn" title="Enable daily reminders" class="p-2 text-slate-400 hover:text-indigo-400 transition-colors">
-                    <i data-feather="bell"></i>
-                </button>
-            </div>
         </header>
 
          <!-- Header for Printing -->
@@ -298,7 +320,7 @@
                  </div>
             </div>
             <div id="order-list" class="space-y-4">
-                <p id="no-orders" class="text-center text-slate-400 py-8">No orders yet. Add one to get started!</p>
+                
             </div>
         </div>
 
@@ -340,7 +362,7 @@
         const orderList = document.getElementById('order-list');
         const totalPendingEl = document.getElementById('total-pending');
         const totalReceivedEl = document.getElementById('total-received');
-        const noOrdersEl = document.getElementById('no-orders');
+        
         const monthSelect = document.getElementById('month-select');
         const yearSelect = document.getElementById('year-select');
         const monthlySalesEl = document.getElementById('monthly-sales');
@@ -354,8 +376,6 @@
         const modalBody = document.getElementById('modal-body');
         const modalFooter = document.getElementById('modal-footer');
 
-        const notificationBtn = document.getElementById('notification-btn');
-        const testNotificationBtn = document.getElementById('test-notification-btn');
         const filterContainer = document.getElementById('filter-container');
         const exportPdfBtn = document.getElementById('export-pdf');
         const shareReportBtn = document.getElementById('share-report');
@@ -379,17 +399,16 @@
             });
         };
         
-        const showToast = (message) => {
-            // Remove any existing toast
+        const showToast = (message, type = 'success') => {
             const existingToast = document.querySelector('.toast');
-            if (existingToast) {
-                existingToast.remove();
-            }
+            if (existingToast) existingToast.remove();
 
             const toast = document.createElement('div');
-            toast.className = 'toast';
+            const isSuccess = type === 'success';
+
+            toast.className = `toast ${isSuccess ? 'toast-success' : 'toast-error'}`;
             toast.innerHTML = `
-                <i data-feather="check-circle" class="w-5 h-5"></i>
+                <i data-feather="${isSuccess ? 'check-circle' : 'alert-triangle'}" class="w-5 h-5"></i>
                 <span class="font-semibold">${message}</span>
             `;
             document.body.appendChild(toast);
@@ -397,7 +416,7 @@
 
             setTimeout(() => {
                 toast.remove();
-            }, 3000); // Remove after 3 seconds
+            }, 3000);
         };
 
         // --- Data Functions (localStorage) ---
@@ -406,7 +425,6 @@
                 const ordersJson = localStorage.getItem(STORAGE_KEY);
                 if (ordersJson) {
                     allOrders = JSON.parse(ordersJson);
-                    // Ensure dates are numbers for sorting
                     allOrders.forEach(o => { o.createdAt = Number(o.createdAt) });
                     allOrders.sort((a, b) => b.createdAt - a.createdAt);
                 } else {
@@ -423,9 +441,8 @@
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(allOrders));
             } catch(e) {
                 console.error("Error saving orders to localStorage", e);
-                showMessageModal('Save Error', 'Could not save data to your device. Your device storage might be full.');
+                showMessageModal('Save Error', 'Could not save data. Storage might be full.');
             }
-            // After saving, re-render everything
             renderOrders();
             updateTotals();
             calculateMonthlyRecap();
@@ -451,51 +468,22 @@
 
             const paymentMethod = paymentMethodInput.value;
 
-            // --- Improved Validation ---
-             if (!customerName) {
-                showMessageModal('Missing Customer', 'Please enter a customer name.');
-                return;
-            }
-            if (!vendorName) {
-                showMessageModal('Missing Vendor', 'Please select or enter a vendor name.');
-                return;
-            }
-            if (!itemDescription) {
-                showMessageModal('Missing Information', 'Please enter an item description.');
-                return;
-            }
-            if (isNaN(costPrice) || isNaN(sellingPrice) || costPrice < 0 || sellingPrice < 0) {
-                showMessageModal('Invalid Price', 'Please enter valid numbers for the cost and selling price.');
-                return;
-            }
-            if (sellingPrice < finalCostPrice) {
-                showMessageModal('Invalid Pricing', 'The selling price cannot be less than the final cost (after discount).');
-                return;
-            }
+             if (!customerName) { showMessageModal('Missing Customer', 'Please enter a customer name.'); return; }
+             if (!vendorName) { showMessageModal('Missing Vendor', 'Please select or enter a vendor name.'); return; }
+             if (!itemDescription) { showMessageModal('Missing Information', 'Please enter an item description.'); return; }
+             if (isNaN(costPrice) || isNaN(sellingPrice) || costPrice < 0 || sellingPrice < 0) { showMessageModal('Invalid Price', 'Please enter valid numbers for cost and selling price.'); return; }
+             if (sellingPrice < finalCostPrice) { showMessageModal('Invalid Pricing', 'Selling price cannot be less than the final cost (after discount).'); return; }
 
             const profit = sellingPrice - finalCostPrice;
             
             const newOrder = {
-                id: crypto.randomUUID(),
-                customerName,
-                itemDescription,
-                vendorName,
-                costPrice,
-                sellingPrice,
-                discount,
-                finalCostPrice,
-                profit,
-                paymentMethod,
-                status: 'pending',
-                createdAt: Date.now(),
-                isArchived: false
+                id: crypto.randomUUID(), customerName, itemDescription, vendorName, costPrice, sellingPrice, discount, finalCostPrice, profit, paymentMethod, status: 'pending', createdAt: Date.now(), isArchived: false
             };
 
             allOrders.unshift(newOrder);
             saveOrders();
             orderForm.reset();
             showToast('Order added successfully!');
-            // Reset vendor dropdown specific fields
             vendorSelect.value = '';
             otherVendorContainer.classList.add('hidden');
             vendorNameOtherInput.required = false;
@@ -507,6 +495,7 @@
             if (orderIndex > -1) {
                 allOrders[orderIndex].status = newStatus;
                 saveOrders();
+                showToast(`Order marked as ${newStatus}.`);
             }
         };
 
@@ -523,6 +512,7 @@
             if (orderIndex > -1) {
                 allOrders[orderIndex].isArchived = false;
                 saveOrders();
+                showToast('Order restored from archive.');
             }
         };
 
@@ -545,12 +535,12 @@
             let title, text, confirmText, confirmClass;
             if (action === 'archive') {
                 title = 'Confirm Archive';
-                text = 'Are you sure you want to archive this order? You can view it later in the "Archived" section.';
+                text = 'Are you sure you want to archive this order?';
                 confirmText = 'Archive';
                 confirmClass = 'bg-slate-500 text-white hover:bg-slate-600';
             } else if (action === 'delete') {
                 title = 'Confirm Deletion';
-                text = 'Are you sure you want to permanently delete this order? This action cannot be undone.';
+                text = 'Are you sure you want to permanently delete this order?';
                 confirmText = 'Delete';
                 confirmClass = 'bg-red-600 text-white hover:bg-red-700';
             }
@@ -581,8 +571,10 @@
             
             if (currentModifyAction === 'archive') {
                 archiveOrder(itemToModifyId);
+                showToast('Order moved to archive.');
             } else if (currentModifyAction === 'delete') {
                 deleteOrder(itemToModifyId);
+                showToast('Order permanently deleted.');
             }
             hideActionModal();
         };
@@ -621,23 +613,20 @@
                 return order.status === currentFilter;
             });
             
-            const noOrdersEl = document.getElementById('no-orders');
-            if (filteredOrders.length > 0) {
-                 if(noOrdersEl) {
-                    noOrdersEl.style.display = 'none';
-                 }
-            } else {
-                if(noOrdersEl) {
-                    noOrdersEl.style.display = 'block';
-                } else {
-                     const noOrdersCard = document.createElement('div');
-                     noOrdersCard.id = "no-orders";
-                     noOrdersCard.className = "glass-card text-center text-slate-400 p-12 rounded-2xl";
+            if (filteredOrders.length === 0) {
+                 const noOrdersCard = document.createElement('div');
+                 noOrdersCard.id = "no-orders";
+                 noOrdersCard.className = "glass-card text-center text-slate-400 p-12 rounded-2xl";
+                 if (allOrders.length === 0) {
                      noOrdersCard.innerHTML = `
                         <h3 class="text-xl font-semibold text-white">Ready for your first order?</h3>
                         <p class="mt-2">Fill out the form above to get started!</p>`;
-                    orderList.appendChild(noOrdersCard);
-                }
+                 } else {
+                      noOrdersCard.innerHTML = `
+                        <h3 class="text-xl font-semibold text-white">No orders found.</h3>
+                        <p class="mt-2">Try a different filter!</p>`;
+                 }
+                orderList.appendChild(noOrdersCard);
             }
             
             filteredOrders.forEach(order => {
@@ -669,13 +658,16 @@
                                     <i data-feather="trash-2" class="w-4 h-4"></i>
                                  </button>`
                             :
-                            isPending ? 
+                            (isPending ? 
                             `<button data-id="${order.id}" data-action="receive" class="bg-green-500/80 hover:bg-green-500 text-white flex-grow sm:flex-grow-0 text-sm font-semibold py-2 px-3 rounded-md transition">Received</button>` : 
-                            `<button data-id="${order.id}" data-action="pend" class="bg-yellow-500/80 hover:bg-yellow-500 text-white flex-grow sm:flex-grow-0 text-sm font-semibold py-2 px-3 rounded-md transition">Pending</button>`
-                            }
-                            ${!order.isArchived ? `<button data-id="${order.id}" data-action="archive" class="bg-slate-500/80 hover:bg-slate-500 text-white p-2 rounded-md transition" title="Archive">
+                            `<button data-id="${order.id}" data-action="pend" class="bg-yellow-500/80 hover:bg-yellow-500 text-white flex-grow sm:flex-grow-0 text-sm font-semibold py-2 px-3 rounded-md transition">Pending</button>`) +
+                            `<button data-id="${order.id}" data-action="archive" class="bg-slate-500/80 hover:bg-slate-500 text-white p-2 rounded-md transition" title="Archive">
                                  <i data-feather="archive" class="w-4 h-4"></i>
-                            </button>` : ''}
+                            </button>
+                            <button data-id="${order.id}" data-action="delete" class="bg-red-500/80 hover:bg-red-500 text-white p-2 rounded-md transition" title="Delete Permanently">
+                                <i data-feather="trash-2" class="w-4 h-4"></i>
+                            </button>`
+                            }
                         </div>
                     </div>
                 `;
@@ -702,7 +694,7 @@
             const yearSelectEl = container.querySelector('.year-select');
 
             if (!monthSelectEl || !yearSelectEl) {
-                console.error("Could not find month or year select elements in the provided container.", container);
+                console.error("Could not find month or year select elements.", container);
                 return;
             }
 
@@ -729,112 +721,12 @@
                 yearSelectEl.appendChild(option);
             });
         }
-
-        // --- Notification Logic ---
-        function sendTestNotification() {
-            if (!('Notification' in window)) {
-                showMessageModal('Not Supported', 'Sorry, your browser does not support notifications.');
-                return;
-            }
-
-            if (Notification.permission === 'granted') {
-                const title = 'Test Notification';
-                const options = {
-                    body: 'This is a sample reminder from RR Creations!',
-                    icon: 'https://placehold.co/192x192/4f46e5/ffffff?text=RR',
-                    tag: 'test-notification'
-                };
-                new Notification(title, options);
-            } else {
-                handleNotificationBellClick(); // Guide user through permissions
-            }
-        }
-
-        const handleNotificationBellClick = () => {
-            if (!('Notification' in window)) {
-                showMessageModal('Not Supported', 'Sorry, your browser does not support notifications.');
-                return;
-            }
-
-            const permission = Notification.permission;
-
-            if (permission === 'granted') {
-                showMessageModal('Notifications Active', 'Reminders are already enabled. You will be notified of pending payments after 11 PM.');
-            } else if (permission === 'denied') {
-                showMessageModal('Notifications Blocked', 'You have blocked notifications. To receive reminders, please enable them in your browser or system settings.');
-            } else { // permission is 'default'
-                Notification.requestPermission().then(newPermission => {
-                    if (newPermission === 'granted') {
-                        showMessageModal('Notifications Enabled', 'You will now receive reminders for pending payments after 11 PM.');
-                        setInterval(checkTimeForReminder, 60 * 1000); // Start the checker
-                    } else {
-                        showMessageModal('Permission Not Granted', 'You have chosen not to receive notifications.');
-                    }
-                    updateNotificationBellUI();
-                });
-            }
-        };
-
-        function updateNotificationBellUI() {
-            const bellSVG = notificationBtn.querySelector('svg');
-            if (!('Notification' in window)) {
-                bellSVG.style.stroke = '#9ca3af'; // gray-400
-                notificationBtn.style.opacity = '0.5';
-                notificationBtn.style.cursor = 'not-allowed';
-                return;
-            }
-
-            switch(Notification.permission) {
-                case "granted":
-                    bellSVG.style.stroke = '#2DD4BF'; // Theme accent color
-                    break;
-                case "denied":
-                    bellSVG.style.stroke = '#F87171'; // red-400
-                    notificationBtn.style.opacity = '0.6';
-                    notificationBtn.style.cursor = 'not-allowed';
-                    break;
-                default:
-                    bellSVG.style.stroke = 'currentColor'; // default
-            }
-        }
-
-        function setupReminder() {
-            updateNotificationBellUI();
-
-            if (!('Notification' in window) || Notification.permission === "denied") return;
-            if (Notification.permission === "granted") setInterval(checkTimeForReminder, 60 * 1000);
-
-            notificationBtn.addEventListener('click', handleNotificationBellClick);
-        }
-
-        function checkTimeForReminder() {
-            const now = new Date();
-            const todayStr = now.toISOString().split('T')[0];
-            const lastNotificationDate = localStorage.getItem('lastNotificationDate');
-            
-            if (now.getHours() >= 23 && lastNotificationDate !== todayStr) {
-                const activeOrders = allOrders.filter(o => !o.isArchived);
-                const totalPending = activeOrders.filter(o => o.status === 'pending').reduce((sum, o) => sum + o.profit, 0);
-                
-                if (totalPending > 0) {
-                     const title = 'Daily Profit Reminder';
-                     const options = {
-                        body: `You have ${formatCurrency(totalPending)} in pending profit. Don't forget to follow up!`,
-                        icon: 'https://placehold.co/192x192/4f46e5/ffffff?text=RR',
-                        tag: 'profit-reminder', 
-                        renotify: true,
-                     };
-                     new Notification(title, options);
-                     localStorage.setItem('lastNotificationDate', todayStr);
-                }
-            }
-        }
         
         // --- Share & Export ---
         const handleShareClick = () => {
             modalTitle.textContent = 'Generate & Share Report';
             modalBody.innerHTML = `
-                <p class="text-slate-300 text-center mb-4">Select the month and year for the report you want to share.</p>
+                <p class="text-slate-300 text-center mb-4">Select the month and year for the report.</p>
                 <div class="flex gap-4">
                     <div class="flex-1">
                         <label for="share-month-select" class="block text-sm font-medium text-slate-300">Month</label>
@@ -849,10 +741,7 @@
             const now = new Date();
             setupDateSelectors(modalBody, now.getMonth(), now.getFullYear());
 
-            modalFooter.innerHTML = `
-                <button id="generate-share-btn" class="w-full btn-gradient text-white font-semibold py-2 px-4 rounded-lg">Generate & Share PDF</button>
-            `;
-
+            modalFooter.innerHTML = `<button id="generate-share-btn" class="w-full btn-gradient text-white font-semibold py-2 px-4 rounded-lg">Generate & Share PDF</button>`;
             document.getElementById('generate-share-btn').onclick = generateAndSharePdf;
             actionModal.style.display = 'flex';
         };
@@ -866,33 +755,22 @@
             const monthName = shareMonthSelect.options[shareMonthSelect.selectedIndex].text;
             
             hideActionModal();
-            showMessageModal('Generating PDF...', 'Please wait while your report is being created. The share dialog will appear shortly.');
+            showMessageModal('Generating PDF...', 'Please wait while your report is being created.');
             
             const doc = new jsPDF();
-            
             const filteredOrders = allOrders.filter(order => {
                 if (order.isArchived || !order.createdAt) return false;
                 const orderDate = new Date(order.createdAt);
                 return orderDate.getMonth() === month && orderDate.getFullYear() === year;
             });
 
-            if (filteredOrders.length === 0) {
-                 showMessageModal('No Data', `There are no orders for ${monthName} ${year} to generate a report.`);
-                 return;
-            }
+            if (filteredOrders.length === 0) { showMessageModal('No Data', `No orders found for ${monthName} ${year}.`); return; }
 
             const head = [['Date', 'Customer', 'Item', 'Vendor', 'Sale', 'Cost', 'Discount', 'Final Cost', 'Profit', 'Status']];
             const body = filteredOrders.map(o => [
-                new Date(o.createdAt).toLocaleDateString(),
-                o.customerName,
-                o.itemDescription,
-                o.vendorName,
-                formatCurrency(o.sellingPrice),
-                formatCurrency(o.costPrice),
-                formatCurrency(o.discount || 0),
-                formatCurrency(o.finalCostPrice ?? o.costPrice),
-                formatCurrency(o.profit),
-                o.status
+                new Date(o.createdAt).toLocaleDateString(), o.customerName, o.itemDescription, o.vendorName,
+                formatCurrency(o.sellingPrice), formatCurrency(o.costPrice), formatCurrency(o.discount || 0),
+                formatCurrency(o.finalCostPrice ?? o.costPrice), formatCurrency(o.profit), o.status
             ]);
             
             const sales = filteredOrders.reduce((sum, o) => sum + o.sellingPrice, 0);
@@ -900,33 +778,20 @@
             const receivedProfit = filteredOrders.filter(o => o.status === 'received').reduce((sum, o) => sum + o.profit, 0);
             const pendingProfit = filteredOrders.filter(o => o.status === 'pending').reduce((sum, o) => sum + o.profit, 0);
             
-            doc.setFontSize(18);
-            doc.text(`RR Creations - Report for ${monthName} ${year}`, 14, 20);
-            doc.setFontSize(11);
-            doc.setTextColor(100);
-            doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 26);
+            doc.setFontSize(18); doc.text(`RR Creations - Report for ${monthName} ${year}`, 14, 20);
+            doc.setFontSize(11); doc.setTextColor(100); doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 26);
             
-            doc.autoTable({
-                startY: 30,
-                head: head,
-                body: body,
-                theme: 'striped',
-                headStyles: { fillColor: [79, 70, 229] }
-            });
+            doc.autoTable({ startY: 30, head: head, body: body, theme: 'striped', headStyles: { fillColor: [79, 70, 229] } });
             
             const summaryY = doc.autoTable.previous.finalY + 10;
-            doc.setFontSize(12);
-            doc.text('Monthly Summary', 14, summaryY);
+            doc.setFontSize(12); doc.text('Monthly Summary', 14, summaryY);
             doc.autoTable({
                 startY: summaryY + 4,
                 body: [
-                    ['Total Sales', formatCurrency(sales)],
-                    ['Total Final Costs', formatCurrency(costs)],
-                    ['Pending Profit', formatCurrency(pendingProfit)],
-                    ['Received Profit', formatCurrency(receivedProfit)],
+                    ['Total Sales', formatCurrency(sales)], ['Total Final Costs', formatCurrency(costs)],
+                    ['Pending Profit', formatCurrency(pendingProfit)], ['Received Profit', formatCurrency(receivedProfit)],
                 ],
-                theme: 'grid',
-                columnStyles: { 0: { fontStyle: 'bold' } }
+                theme: 'grid', columnStyles: { 0: { fontStyle: 'bold' } }
             });
 
             const pdfBlob = doc.output('blob');
@@ -935,19 +800,10 @@
 
             if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
                 try {
-                    await navigator.share({
-                        title: `RR Creations Report for ${monthName} ${year}`,
-                        text: `Here is the monthly report for ${monthName} ${year}.`,
-                        files: [pdfFile]
-                    });
+                    await navigator.share({ title: `RR Creations Report for ${monthName} ${year}`, text: `Here is the monthly report.`, files: [pdfFile] });
                     hideActionModal();
-                } catch (error) {
-                    console.error('Share failed:', error);
-                    showMessageModal('Share Failed', 'There was an error trying to share the file. Please try exporting instead.');
-                }
-            } else {
-                showMessageModal('Share Not Supported', 'Your browser does not support sharing files. Please use the "Export PDF" button to download the report.');
-            }
+                } catch (error) { showMessageModal('Share Failed', 'Could not share the file. Please try exporting instead.'); }
+            } else { showMessageModal('Share Not Supported', 'Your browser does not support sharing files. Please use "Export PDF" instead.'); }
         };
 
         // --- Event Listeners ---
@@ -984,7 +840,7 @@
             else if (action === 'pend') updateStatus(id, 'pending');
             else if (action === 'archive') showConfirmationModal(id, 'archive');
             else if (action === 'delete') showConfirmationModal(id, 'delete');
-            else if (action === 'unarchive') unarchiveOrder(id);
+            else if (action === 'unarchive') { unarchiveOrder(id); }
         });
 
         filterContainer.addEventListener('click', (e) => {
@@ -998,21 +854,15 @@
         
         monthSelect.addEventListener('change', calculateMonthlyRecap);
         yearSelect.addEventListener('change', calculateMonthlyRecap);
-        actionModal.addEventListener('click', (e) => {
-            if (e.target === actionModal) hideActionModal();
-        });
+        actionModal.addEventListener('click', (e) => { if (e.target === actionModal) hideActionModal(); });
 
         exportPdfBtn.addEventListener('click', () => {
-            const selectedMonth = monthSelect.options[monthSelect.selectedIndex].text;
-            const selectedYear = yearSelect.value;
-            printTitleEl.textContent = `RR Creations - ${selectedMonth} ${selectedYear} Report`;
+            printTitleEl.textContent = `RR Creations - ${monthSelect.options[monthSelect.selectedIndex].text} ${yearSelect.value} Report`;
             printDateEl.textContent = `Generated on: ${new Date().toLocaleDateString()}`;
             window.print();
         });
         shareReportBtn.addEventListener('click', handleShareClick);
-        testNotificationBtn.addEventListener('click', sendTestNotification);
-
-
+        
         // --- PWA Install Logic ---
         let deferredPrompt;
         const installContainer = document.getElementById('install-container');
@@ -1045,7 +895,7 @@
             renderOrders();
             updateTotals();
             calculateMonthlyRecap();
-            setupReminder();
+            
             if (typeof feather !== 'undefined') {
                 feather.replace();
             } else {
@@ -1056,6 +906,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
