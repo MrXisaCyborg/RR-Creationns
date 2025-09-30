@@ -269,7 +269,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-share-2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
                      </button>
                      <button id="export-pdf" title="Export as PDF" class="p-2 text-slate-400 hover:text-indigo-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
                      </button>
                  </div>
             </div>
@@ -443,9 +443,9 @@
             const discountValue = discountInput.value.replace(/,/g, '');
 
             const costPrice = parseFloat(costPriceValue);
-            const originalSellingPrice = parseFloat(sellingPriceValue);
+            const sellingPrice = parseFloat(sellingPriceValue);
             const discount = parseFloat(discountValue) || 0;
-            const finalSellingPrice = originalSellingPrice - discount;
+            const finalCostPrice = costPrice - discount;
 
             const paymentMethod = paymentMethodInput.value;
 
@@ -462,16 +462,16 @@
                 showMessageModal('Missing Information', 'Please enter an item description.');
                 return;
             }
-            if (isNaN(costPrice) || isNaN(originalSellingPrice) || costPrice < 0 || originalSellingPrice < 0) {
+            if (isNaN(costPrice) || isNaN(sellingPrice) || costPrice < 0 || sellingPrice < 0) {
                 showMessageModal('Invalid Price', 'Please enter valid numbers for the cost and selling price.');
                 return;
             }
-            if (finalSellingPrice < costPrice) {
-                showMessageModal('Invalid Pricing', 'The final price (after discount) cannot be less than the cost price.');
+            if (sellingPrice < finalCostPrice) {
+                showMessageModal('Invalid Pricing', 'The selling price cannot be less than the final cost (after discount).');
                 return;
             }
 
-            const profit = finalSellingPrice - costPrice;
+            const profit = sellingPrice - finalCostPrice;
             
             const newOrder = {
                 id: crypto.randomUUID(),
@@ -479,9 +479,9 @@
                 itemDescription,
                 vendorName,
                 costPrice,
-                sellingPrice: originalSellingPrice,
+                sellingPrice,
                 discount,
-                finalSellingPrice,
+                finalCostPrice,
                 profit,
                 paymentMethod,
                 status: 'pending',
@@ -594,8 +594,8 @@
                 return orderDate.getMonth() === selectedMonth && orderDate.getFullYear() === selectedYear;
             });
             
-            const sales = filteredOrders.reduce((sum, o) => sum + (o.finalSellingPrice ?? o.sellingPrice), 0);
-            const costs = filteredOrders.reduce((sum, o) => sum + o.costPrice, 0);
+            const sales = filteredOrders.reduce((sum, o) => sum + o.sellingPrice, 0);
+            const costs = filteredOrders.reduce((sum, o) => sum + (o.finalCostPrice ?? o.costPrice), 0);
             const receivedProfit = filteredOrders.filter(o => o.status === 'received').reduce((sum, o) => sum + o.profit, 0);
             const pendingProfit = filteredOrders.filter(o => o.status === 'pending').reduce((sum, o) => sum + o.profit, 0);
 
@@ -629,7 +629,6 @@
                 const isPending = order.status === 'pending';
                 const cardClass = isPending ? 'status-pending' : 'status-received';
                 const statusTextClass = isPending ? 'text-status-pending' : 'text-status-received';
-                const finalPrice = order.finalSellingPrice ?? order.sellingPrice;
 
                 const orderEl = document.createElement('div');
                 orderEl.className = `p-4 rounded-lg shadow-md flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 ${cardClass} dark:border order-card`;
@@ -637,12 +636,11 @@
                     <div class="flex-grow">
                         <p class="font-semibold text-slate-100">${order.customerName}</p>
                         <p class="text-sm text-slate-400">${order.itemDescription}</p>
-                        ${order.vendorName ? `<p class="text-xs text-slate-400 mt-1">Sold by: <span class="font-medium">${order.vendorName}</span></p>` : ''}
+                        ${order.vendorName ? `<p class="text-xs text-slate-400 mt-1">From: <span class="font-medium">${order.vendorName}</span></p>` : ''}
                         <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm mt-2">
                            <p><span class="font-medium text-slate-400">Sale:</span> ${formatCurrency(order.sellingPrice)}</p>
-                           ${order.discount > 0 ? `<p><span class="font-medium text-slate-400">Discount:</span> - ${formatCurrency(order.discount)}</p>` : ''}
-                           <p><span class="font-bold text-slate-300">Final:</span> ${formatCurrency(finalPrice)}</p>
                            <p><span class="font-medium text-slate-400">Cost:</span> ${formatCurrency(order.costPrice)}</p>
+                           ${order.discount > 0 ? `<p><span class="font-medium text-slate-400">Discount:</span> - ${formatCurrency(order.discount)}</p>` : ''}
                            <p><span class="font-bold text-green-400">Profit:</span> ${formatCurrency(order.profit)}</p>
                            ${order.paymentMethod ? `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${order.paymentMethod === 'GPay' ? 'bg-blue-900 text-blue-200' : 'bg-emerald-900 text-emerald-200'}">${order.paymentMethod}</span>` : ''}
                         </div>
@@ -828,21 +826,22 @@
                  return;
             }
 
-            const head = [['Date', 'Customer', 'Item', 'Sale', 'Discount', 'Final Price', 'Cost', 'Profit', 'Status']];
+            const head = [['Date', 'Customer', 'Item', 'Vendor', 'Sale', 'Cost', 'Discount', 'Final Cost', 'Profit', 'Status']];
             const body = filteredOrders.map(o => [
                 new Date(o.createdAt).toLocaleDateString(),
                 o.customerName,
                 o.itemDescription,
+                o.vendorName,
                 formatCurrency(o.sellingPrice),
-                formatCurrency(o.discount || 0),
-                formatCurrency(o.finalSellingPrice ?? o.sellingPrice),
                 formatCurrency(o.costPrice),
+                formatCurrency(o.discount || 0),
+                formatCurrency(o.finalCostPrice ?? o.costPrice),
                 formatCurrency(o.profit),
                 o.status
             ]);
             
-            const sales = filteredOrders.reduce((sum, o) => sum + (o.finalSellingPrice ?? o.sellingPrice), 0);
-            const costs = filteredOrders.reduce((sum, o) => sum + o.costPrice, 0);
+            const sales = filteredOrders.reduce((sum, o) => sum + o.sellingPrice, 0);
+            const costs = filteredOrders.reduce((sum, o) => sum + (o.finalCostPrice ?? o.costPrice), 0);
             const receivedProfit = filteredOrders.filter(o => o.status === 'received').reduce((sum, o) => sum + o.profit, 0);
             const pendingProfit = filteredOrders.filter(o => o.status === 'pending').reduce((sum, o) => sum + o.profit, 0);
             
@@ -866,8 +865,8 @@
             doc.autoTable({
                 startY: summaryY + 4,
                 body: [
-                    ['Total Final Sales', formatCurrency(sales)],
-                    ['Total Costs', formatCurrency(costs)],
+                    ['Total Sales', formatCurrency(sales)],
+                    ['Total Final Costs', formatCurrency(costs)],
                     ['Pending Profit', formatCurrency(pendingProfit)],
                     ['Received Profit', formatCurrency(receivedProfit)],
                 ],
@@ -995,6 +994,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
